@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized News</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>📰 Personalized News Feed</h1>
+
+    <label for="persona-select">Choose a Persona:</label>
+    <select id="persona-select">
+        <option value="">-- Select --</option>
+        <option value="Alex Parker">Alex Parker</option>
+        <option value="Lisa Thompson">Lisa Thompson</option>
+    </select>
+
+    <button onclick="fetchNews()">Get News</button>
+
+    <div id="news-container"></div>
+
+    <script>
+        async function fetchNews() {
+            const persona = document.getElementById("persona-select").value;
+            if (!persona) {
+                alert("Please select a persona.");
+                return;
+            }
+
+            const response = await fetch("/api/news");
+            const newsData = await response.json();
+
+            const newsContainer = document.getElementById("news-container");
+            newsContainer.innerHTML = `<h2>News for ${persona}</h2>`;
+
+            if (newsData[persona]) {
+                newsData[persona].forEach(article => {
+                    newsContainer.innerHTML += `
+                        <div class="news-item">
+                            <h3>${article.title}</h3>
+                            <p>${article.summary}</p>
+                            <a href="${article.link}" target="_blank">Read More</a>
+                        </div>
+                    `;
+                });
+            } else {
+                newsContainer.innerHTML += "<p>No news found.</p>";
+            }
+        }
+    </script>
+</body>
+</html>
